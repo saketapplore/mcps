@@ -7,12 +7,14 @@ import EmployeeList from '../components/EmployeeList.jsx';
 import useDebounce from '../hooks/useDebounce.js';
 import Pagination from '../components/Pagination.jsx';
 import SortDropdown from '../components/SortDropdown.jsx'
-import getEmployees from '../services/employeeApi.js';
-import DepartmentFilter from '../components/DepartMentFilter.jsx'
+import { getEmployees } from '../services/employeeApi.js';
+import DepartmentFilter from '../components/DepartmentFilter.jsx'
+import { useNavigate } from 'react-router-dom';
 
 const EmployeeDirectory = () => {
  
 const [employees, setEmployees] = useState([]);
+const navigate = useNavigate();
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [searchTerm ,setSearchTerm] = useState('');
@@ -20,6 +22,8 @@ const [currentPage, setCurrentPage] = useState(1);
 const [sortOption , setSortOption] = useState('default')
 const [selectedDepartment , setSelectedDepartment] = useState('')
 const employeesPerPage = 5;
+
+
 
 useEffect(() => {
 
@@ -43,7 +47,7 @@ const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
 useEffect(() => {
     setCurrentPage(1);
-}, [debouncedSearchTerm]);
+}, [debouncedSearchTerm , sortOption , selectedDepartment]);
 
 
 const filteredEmployees = useMemo(() => {
@@ -113,6 +117,10 @@ if(error){
     return <Error message={error} />
 }
 
+const handleEmployeeClick = (employee) => {
+  navigate(`/employees/${employee.id}`)
+}
+
 const totalPages = Math.ceil(sortedEmployees.length / employeesPerPage);
 
 const startIndex = (currentPage - 1) * employeesPerPage;
@@ -147,9 +155,14 @@ const paginatedEmployees = sortedEmployees
      />
 
       {
-        sortedEmployees.length === 0 ? (
+        sortedEmployees.length === 0 ?
+         (
             <EmptyState />
-        ) :( <><EmployeeList employees={paginatedEmployees} />
+        ) :( <>
+        <EmployeeList 
+        employees={paginatedEmployees}
+        onEmployeeSelect={handleEmployeeClick}
+        />
           
          {
             totalPages > 1 && (
@@ -161,6 +174,8 @@ const paginatedEmployees = sortedEmployees
             )
          }
 
+        
+
        </>
        
         )
@@ -168,6 +183,7 @@ const paginatedEmployees = sortedEmployees
         
       }
        
+
 
      </div>
 

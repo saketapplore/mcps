@@ -1,6 +1,6 @@
 import EmployeeCard from './EmployeeCard.jsx';
 
-const EmployeeList = ({ employees}) => {
+const EmployeeList = ({ employees , onEmployeeSelect}) => {
 
     return (
         <div className="employee-list">
@@ -8,6 +8,7 @@ const EmployeeList = ({ employees}) => {
             <EmployeeCard 
             key={employee.id}
             employee={employee}
+            onEmployeeSelect={onEmployeeSelect}
             />
            ))}
         </div>

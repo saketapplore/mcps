@@ -5,6 +5,7 @@ const SortDropdown = ({sortOption , setSortOption}) => {
         <div>
             <label htmlFor="sort">Sort By: </label>
                <select
+               id="sort"
                value={sortOption}
                onChange={(e) => setSortOption(e.target.value)}
                >

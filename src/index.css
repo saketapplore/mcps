@@ -175,3 +175,232 @@ input[type='text']:focus {
   color: #dc2626;
   padding: 24px;
 }
+
+/* ===========================
+   Skeleton Loader
+=========================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -450px 0;
+  }
+
+  100% {
+    background-position: 450px 0;
+  }
+}
+
+.loader-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  text-align: left;
+  padding-top: 16px;
+}
+
+.loader-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #e5e7eb 25%,
+    #f3f4f6 50%,
+    #e5e7eb 75%
+  );
+
+  background-size: 450px 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.loader-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.loader-name {
+  width: 140px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.loader-email {
+  width: 180px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.loader-phone {
+  width: 120px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: left;
+  box-shadow: var(--shadow);
+}
+
+.modal img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.modal h2 {
+  margin: 0 0 12px;
+}
+
+.modal p {
+  margin: 6px 0;
+}
+
+.modal button {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.employee-card {
+  cursor: pointer;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.pagination button {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.active-page {
+  background: #2563eb !important;
+  color: white !important;
+  border-color: #2563eb !important;
+}
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 32px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  box-sizing: border-box;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 30%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.clear-btn:hover {
+  color: #111827;
+}
+.employee-details {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+
+.employee-details img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.employee-details h2 {
+  margin-bottom: 16px;
+}
+
+.employee-details p {
+  margin: 8px 0;
+}
+
+.back-btn {
+  padding: 10px 18px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #f3f4f6;
+}

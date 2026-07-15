@@ -11,9 +11,27 @@ const Pagination = ({
             >
                 Previous
             </button>
-            <span>
-                Page {currentPage} of {totalPages}
-            </span>
+              {
+                Array.from({length : totalPages} , (_ , index) => {
+                    const pageNumber = index + 1;
+
+                     return (
+
+                        <button
+                          key={pageNumber}
+                          onClick={() => onPageChange(pageNumber)}
+                          className={
+                            currentPage === pageNumber ?
+                            'active-user' : ''
+                          }
+                        >
+                            {pageNumber}
+                        </button>
+
+                     )
+
+                })
+              }
             <button
              disabled={currentPage === totalPages}
              onClick={() => onPageChange(currentPage + 1)}

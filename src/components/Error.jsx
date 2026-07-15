@@ -1,9 +1,16 @@
-const Error = ({ message }) => {
+const Error = ({message , onRetry}) => {
   return (
-    <p className="error-message">
-      {message || 'An error occurred while fetching employees.'}
-    </p>
-  );
-};
+    <div className="error-container">
+       <p className="error-message">
+         {message || "Failed to fetch employees"}
+       </p>
+       <button onClick={onRetry}>
+         Retry
+       </button>
+    </div>
+  )
+}
 
 export default Error;
+
+
