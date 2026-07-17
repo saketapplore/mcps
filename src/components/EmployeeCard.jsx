@@ -1,6 +1,6 @@
 
 
-const EmployeeCard = ({ employee , onEmployeeSelect }) => {
+const EmployeeCard = ({ employee , onEmployeeSelect , onEditEmployee}) => {
 
     return(
 
@@ -14,6 +14,16 @@ const EmployeeCard = ({ employee , onEmployeeSelect }) => {
 
              <p>{employee.email}</p>
              <p>{employee.phone}</p>
+
+             <button
+              onClick={(e) => {
+               e.stopPropagation();
+               onEditEmployee(employee)
+              }}
+             >
+                Edit
+             </button>
+
         </div>
 
     )

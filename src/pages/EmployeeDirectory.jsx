@@ -10,6 +10,7 @@ import SortDropdown from '../components/SortDropdown.jsx'
 import { getEmployees } from '../services/employeeApi.js';
 import DepartmentFilter from '../components/DepartmentFilter.jsx'
 import { useNavigate } from 'react-router-dom';
+import EmployeeForm from '../components/EmployeeForm.jsx';
 
 const EmployeeDirectory = () => {
  
@@ -21,6 +22,7 @@ const [searchTerm ,setSearchTerm] = useState('');
 const [currentPage, setCurrentPage] = useState(1);
 const [sortOption , setSortOption] = useState('default')
 const [selectedDepartment , setSelectedDepartment] = useState('')
+const [editingEmployee, setEditingEmployee] = useState(null)
 const employeesPerPage = 5;
 
 
@@ -117,9 +119,73 @@ if(error){
     return <Error message={error} />
 }
 
+const handleAddEmployee = (newEmployee) => {
+
+  const [firstName, ...lastNameParts] = newEmployee.name.trim().split(" ");
+
+const employee = {
+  id: Date.now(),
+  firstName,
+  lastName: lastNameParts.join(" "),
+  email: newEmployee.email,
+  phone: newEmployee.phone,
+  image: "https://dummyjson.com/icon/emilys/128",
+  company: {
+    department: newEmployee.department,
+  },
+  address: {
+    address: "",
+    city: "",
+  },
+};
+
+  setEmployees((previousEmployee) => [
+    employee,
+    ...previousEmployee
+  ])
+
+}
+
 const handleEmployeeClick = (employee) => {
   navigate(`/employees/${employee.id}`)
 }
+
+const handleEditEmployee = (employee) => {
+    console.log(employee);
+    setEditingEmployee(employee);
+}
+
+const handleUpdateEmployee = (updatedEmployee) => {
+
+  const [firstName, ...lastNameParts] =
+    updatedEmployee.name.trim().split(" ");
+
+  setEmployees((previousEmployees) =>
+    previousEmployees.map((employee) => {
+
+      if (employee.id !== updatedEmployee.id) {
+        return employee;
+      }
+
+      return {
+        ...employee,
+
+        firstName,
+        lastName: lastNameParts.join(" "),
+
+        email: updatedEmployee.email,
+        phone: updatedEmployee.phone,
+
+        company: {
+          ...employee.company,
+          department: updatedEmployee.department,
+        },
+      };
+    })
+  );
+
+  setEditingEmployee(null);
+};
 
 const totalPages = Math.ceil(sortedEmployees.length / employeesPerPage);
 
@@ -137,6 +203,13 @@ const paginatedEmployees = sortedEmployees
      <div>
 
      <h1>Employee Directory</h1>
+
+      <EmployeeForm 
+       onAddEmployee = {handleAddEmployee}
+       departments = {departments}
+       editingEmployee= {editingEmployee}
+       onUpdateEmployee= {handleUpdateEmployee}
+      />
 
       <SearchBar 
       searchTerm={searchTerm}
@@ -162,6 +235,7 @@ const paginatedEmployees = sortedEmployees
         <EmployeeList 
         employees={paginatedEmployees}
         onEmployeeSelect={handleEmployeeClick}
+        onEditEmployee = {handleEditEmployee}
         />
           
          {
