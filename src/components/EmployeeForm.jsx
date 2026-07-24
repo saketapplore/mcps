@@ -1,157 +1,229 @@
-import { useEffect, useState } from "react"
+import { useEffect, useReducer } from "react";
 
-const EmployeeForm = ({onAddEmployee , departments , editingEmployee , onUpdateEmployee}) => {
+const initialState = {
+  name: "",
+  email: "",
+  phone: "",
+  department: "",
+};
 
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [department , setDepartment] = useState('');
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "UPDATE_FIELD":
+      return {
+        ...state,
+        [action.field]: action.value,
+      };
 
-   
-    useEffect(() => {
-      
-      if(!editingEmployee){
-        return;
-      }
+    case "SET_FORM":
+      return {
+        name: action.payload.name,
+        email: action.payload.email,
+        phone: action.payload.phone,
+        department: action.payload.department,
+      };
 
-      setName(
-        `${editingEmployee.firstName} ${editingEmployee.lastName}`.trim()
-      )
+    case "RESET_FORM":
+      return initialState;
 
-      setEmail(editingEmployee.email);
-      setPhone(editingEmployee.phone)
-      setDepartment(editingEmployee.company?.department ?? "");
+    default:
+      return state;
+  }
+};
 
-    }, [editingEmployee])
+const EmployeeForm = ({
+  onAddEmployee,
+  departments,
+  editingEmployee,
+  onUpdateEmployee,
+}) => {
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-      if(!name.trim()){
-        alert('Name is required')
-        return;
-      }
+  useEffect(() => {
 
-      if(!email.trim()){
-        alert('Email is required')
-        return;
-      }
+    if (!editingEmployee) {
+      dispatch({
+        type: "RESET_FORM",
+      });
+      return;
+    }
 
-      if(!phone.trim()){
-        alert('Phone is required')
-        return;
-      }
+    dispatch({
+      type: "SET_FORM",
+      payload: {
+        name: `${editingEmployee.firstName} ${editingEmployee.lastName}`.trim(),
+        email: editingEmployee.email,
+        phone: editingEmployee.phone,
+        department: editingEmployee.company?.department ?? "",
+      },
+    });
 
-      if(!department.trim()){
-        alert('Department is required')
-        return;
-      }
+  }, [editingEmployee]);
 
-      if(editingEmployee){
-        onUpdateEmployee({
-          id: editingEmployee.id,
-          name,
-          email,
-          phone,
-          department
-        })
-      } else {
-        onAddEmployee({
-        name,
-        email,
-        phone,
-        department
-      })
-      }
+  const handleSubmit = (e) => {
 
-      setName('');
-      setEmail('');
-      setPhone('');
-      setDepartment('');
+    e.preventDefault();
+
+    if (!state.name.trim()) {
+      alert("Name is required");
+      return;
+    }
+
+    if (!state.email.trim()) {
+      alert("Email is required");
+      return;
+    }
+
+    if (!state.phone.trim()) {
+      alert("Phone is required");
+      return;
+    }
+
+    if (!state.department.trim()) {
+      alert("Department is required");
+      return;
+    }
+
+    if (editingEmployee) {
+
+      onUpdateEmployee({
+        id: editingEmployee.id,
+        name: state.name,
+        email: state.email,
+        phone: state.phone,
+        department: state.department,
+      });
+
+    } else {
+
+      onAddEmployee({
+        name: state.name,
+        email: state.email,
+        phone: state.phone,
+        department: state.department,
+      });
 
     }
 
-    return (
+    dispatch({
+      type: "RESET_FORM",
+    });
 
-    <form className="employee-form"
-       onSubmit={handleSubmit}
+  };
+
+  return (
+    <form
+      className="employee-form"
+      onSubmit={handleSubmit}
     >
-        
-        <div>
-            <label htmlFor="name"
-            >Name</label>
 
-             <input      
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              id="name"
-              placeholder="Enter Name"
-              type="text"
-             />
+      <div>
+        <label htmlFor="name">
+          Name
+        </label>
 
-        </div>
+        <input
+          id="name"
+          type="text"
+          placeholder="Enter Name"
+          value={state.name}
+          onChange={(e) =>
+            dispatch({
+              type: "UPDATE_FIELD",
+              field: "name",
+              value: e.target.value,
+            })
+          }
+        />
+      </div>
 
-        <div>
+      <div>
 
-             <label htmlFor="email">Email</label>
+        <label htmlFor="email">
+          Email
+        </label>
 
-            <input 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            id='email'
-            type="email"
-            placeholder="Enter Email"
-            />
+        <input
+          id="email"
+          type="email"
+          placeholder="Enter Email"
+          value={state.email}
+          onChange={(e) =>
+            dispatch({
+              type: "UPDATE_FIELD",
+              field: "email",
+              value: e.target.value,
+            })
+          }
+        />
 
-        </div>
+      </div>
 
-        <div>
+      <div>
 
-           <label htmlFor="phone">Phone Number</label>
- 
-           <input 
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            id="phone"
-            type="tel"
-            placeholder="Enter Phone Number"
-           />
+        <label htmlFor="phone">
+          Phone Number
+        </label>
 
-        </div>
+        <input
+          id="phone"
+          type="tel"
+          placeholder="Enter Phone Number"
+          value={state.phone}
+          onChange={(e) =>
+            dispatch({
+              type: "UPDATE_FIELD",
+              field: "phone",
+              value: e.target.value,
+            })
+          }
+        />
 
+      </div>
 
-        <div>
+      <div>
 
-          <label htmlFor="department">Department</label>
-          
-          <select id="department"
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-          >
-             <option value=''>Select Department</option>
-             {
-                departments?.map((department) => (
-                   <option 
-                   key={department}
-                   value={department}
-                   >
-                    {department}
-                   </option>
-                ))
-             }
-          </select>
+        <label htmlFor="department">
+          Department
+        </label>
 
-        </div>
+        <select
+          id="department"
+          value={state.department}
+          onChange={(e) =>
+            dispatch({
+              type: "UPDATE_FIELD",
+              field: "department",
+              value: e.target.value,
+            })
+          }
+        >
+          <option value="">
+            Select Department
+          </option>
 
-        <button
-        type="submit">
-            {editingEmployee ? 'Update Employee' : 'Add Employee'}
-        </button>
+          {departments?.map((department) => (
+            <option
+              key={department}
+              value={department}
+            >
+              {department}
+            </option>
+          ))}
+
+        </select>
+
+      </div>
+
+      <button type="submit">
+        {editingEmployee
+          ? "Update Employee"
+          : "Add Employee"}
+      </button>
 
     </form>
-
-)
-
-}
+  );
+};
 
 export default EmployeeForm;

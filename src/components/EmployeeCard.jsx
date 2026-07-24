@@ -1,11 +1,14 @@
+import {memo} from 'react'
 
+const EmployeeCard = ({ employee , onEmployeeSelect , onEditEmployee, onDeleteEmployee}) => {
 
-const EmployeeCard = ({ employee , onEmployeeSelect , onEditEmployee}) => {
+ 
 
     return(
 
         <div className="employee-card"
         onClick={() => onEmployeeSelect(employee)}
+        
         >
              <img src={employee.image}
              alt={`${employee.firstName} ${employee.lastName}`} />
@@ -24,10 +27,30 @@ const EmployeeCard = ({ employee , onEmployeeSelect , onEditEmployee}) => {
                 Edit
              </button>
 
+             <button
+              onClick={(e) => {
+                e.stopPropagation();
+
+                const isConfirmed = window.confirm(
+                    "Are you sure want to delete?"
+                )
+
+                if(!isConfirmed){
+                    return;
+                }
+
+                onDeleteEmployee(employee.id)
+              }}
+             >
+                Delete
+             </button>
+
+         
+
         </div>
 
     )
 
 }
 
-export default EmployeeCard;
+export default memo(EmployeeCard);

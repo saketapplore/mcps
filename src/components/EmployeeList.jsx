@@ -1,6 +1,7 @@
 import EmployeeCard from './EmployeeCard.jsx';
+import { memo } from 'react';
 
-const EmployeeList = ({ employees , onEmployeeSelect, onEditEmployee}) => {
+const EmployeeList = ({ employees , onEmployeeSelect, onEditEmployee, onDeleteEmployee}) => {
 
     return (
         <div className="employee-list">
@@ -10,6 +11,7 @@ const EmployeeList = ({ employees , onEmployeeSelect, onEditEmployee}) => {
             employee={employee}
             onEmployeeSelect={onEmployeeSelect}
             onEditEmployee= {onEditEmployee}
+            onDeleteEmployee= {onDeleteEmployee}
             />
            ))}
         </div>
@@ -17,5 +19,5 @@ const EmployeeList = ({ employees , onEmployeeSelect, onEditEmployee}) => {
 
 }
 
-export default EmployeeList;
+export default memo(EmployeeList);
 

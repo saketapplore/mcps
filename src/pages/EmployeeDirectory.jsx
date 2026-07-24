@@ -1,4 +1,4 @@
-import {useState, useEffect, useMemo} from 'react';
+import {useState, useEffect, useMemo, useCallback, useContext} from 'react';
 import SearchBar from '../components/SearchBar.jsx';
 import Loader from '../components/Loader.jsx';
 import Error from '../components/Error.jsx';
@@ -11,9 +11,14 @@ import { getEmployees } from '../services/employeeApi.js';
 import DepartmentFilter from '../components/DepartmentFilter.jsx'
 import { useNavigate } from 'react-router-dom';
 import EmployeeForm from '../components/EmployeeForm.jsx';
+import useAuth from '../hooks/useAuth.js';
+import useTheme from '../hooks/useTheme.js';
+
 
 const EmployeeDirectory = () => {
  
+const {theme, toggleTheme} = useTheme();
+const {user, login, logout} = useAuth();  
 const [employees, setEmployees] = useState([]);
 const navigate = useNavigate();
 const [loading, setLoading] = useState(true);
@@ -50,6 +55,13 @@ const debouncedSearchTerm = useDebounce(searchTerm, 500);
 useEffect(() => {
     setCurrentPage(1);
 }, [debouncedSearchTerm , sortOption , selectedDepartment]);
+
+const pageStyle = {
+  backgroundColor: theme === "light" ? "#ffffff" : "#1f2937",
+  color: theme === "light" ? "#000000" : "#ffffff",
+  minHeight: "100vh",
+  padding: "20px",
+};
 
 
 const filteredEmployees = useMemo(() => {
@@ -100,6 +112,15 @@ const sortedEmployees = useMemo(() => {
   return sorted;
 }, [departmentFilteredEmployees, sortOption]);
 
+useEffect(() => {
+  const totalPages = Math.ceil(
+    sortedEmployees.length / employeesPerPage
+  );
+
+  if (currentPage > totalPages && totalPages > 0) {
+    setCurrentPage(totalPages);
+  }
+}, [sortedEmployees, currentPage]);
 
 const departments = useMemo(() => {
   return [
@@ -111,15 +132,9 @@ const departments = useMemo(() => {
   ];
 }, [employees]);
 
-if(loading){
-    return <Loader />
-}
 
-if(error){
-    return <Error message={error} />
-}
 
-const handleAddEmployee = (newEmployee) => {
+const handleAddEmployee = useCallback((newEmployee) => {
 
   const [firstName, ...lastNameParts] = newEmployee.name.trim().split(" ");
 
@@ -144,18 +159,17 @@ const employee = {
     ...previousEmployee
   ])
 
-}
+}, []);
 
-const handleEmployeeClick = (employee) => {
-  navigate(`/employees/${employee.id}`)
-}
+const handleEmployeeClick = useCallback((employee) => {
+  navigate(`/employees/${employee.id}`);
+}, [navigate]);
 
-const handleEditEmployee = (employee) => {
-    console.log(employee);
-    setEditingEmployee(employee);
-}
+const handleEditEmployee = useCallback((employee) => {
+  setEditingEmployee(employee);
+}, []);
 
-const handleUpdateEmployee = (updatedEmployee) => {
+const handleUpdateEmployee = useCallback((updatedEmployee) => {
 
   const [firstName, ...lastNameParts] =
     updatedEmployee.name.trim().split(" ");
@@ -185,7 +199,21 @@ const handleUpdateEmployee = (updatedEmployee) => {
   );
 
   setEditingEmployee(null);
-};
+}, []);
+
+const handleDeleteEmployee = useCallback((id) => {
+  setEmployees((previous) =>
+      previous.filter((employee) => employee.id !== id)
+  );
+}, []);
+
+if(loading){
+  return <Loader />
+}
+
+if(error){
+  return <Error message={error} />
+}
 
 const totalPages = Math.ceil(sortedEmployees.length / employeesPerPage);
 
@@ -200,9 +228,39 @@ const paginatedEmployees = sortedEmployees
   return (
 
      
-     <div>
+     <div style={pageStyle}>
 
-     <h1>Employee Directory</h1>
+     <button onClick={toggleTheme}>
+       Toggle Theme
+     </button>
+
+     <button onClick={() => 
+      login({
+        name: "John Doe",
+        email: "john.doe@example.com",
+      })
+     }> 
+        Login
+     </button>
+ 
+     <button onClick={logout}>
+      Logout
+     </button>
+     
+    
+     <p>Current Theme : {theme}</p>
+     
+     {
+      user ? (  
+        <>
+        <p>Welcome, {user.name}</p>
+        <p>{user.email}</p>
+        </>
+      ) : 
+      (
+        <p>Please login to continue</p>
+      )
+     }
 
       <EmployeeForm 
        onAddEmployee = {handleAddEmployee}
@@ -236,6 +294,7 @@ const paginatedEmployees = sortedEmployees
         employees={paginatedEmployees}
         onEmployeeSelect={handleEmployeeClick}
         onEditEmployee = {handleEditEmployee}
+        onDeleteEmployee = {handleDeleteEmployee}
         />
           
          {
