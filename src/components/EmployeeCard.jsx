@@ -30,15 +30,6 @@ const EmployeeCard = ({ employee , onEmployeeSelect , onEditEmployee, onDeleteEm
              <button
               onClick={(e) => {
                 e.stopPropagation();
-
-                const isConfirmed = window.confirm(
-                    "Are you sure want to delete?"
-                )
-
-                if(!isConfirmed){
-                    return;
-                }
-
                 onDeleteEmployee(employee.id)
               }}
              >

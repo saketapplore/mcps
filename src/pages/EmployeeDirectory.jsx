@@ -13,10 +13,14 @@ import { useNavigate } from 'react-router-dom';
 import EmployeeForm from '../components/EmployeeForm.jsx';
 import useAuth from '../hooks/useAuth.js';
 import useTheme from '../hooks/useTheme.js';
+import useModal from '../hooks/useModal.js';
+import ConfirmationModal from '../components/ConfirmationModal.jsx';
+import Modal from '../components/Modal.jsx';
 
 
 const EmployeeDirectory = () => {
- 
+const {isOpen, openModal, closeModal} = useModal();
+const [employeeToDelete, setEmployeeToDelete] = useState(null);
 const {theme, toggleTheme} = useTheme();
 const {user, login, logout} = useAuth();  
 const [employees, setEmployees] = useState([]);
@@ -202,10 +206,24 @@ const handleUpdateEmployee = useCallback((updatedEmployee) => {
 }, []);
 
 const handleDeleteEmployee = useCallback((id) => {
-  setEmployees((previous) =>
-      previous.filter((employee) => employee.id !== id)
+  setEmployeeToDelete(id);
+  openModal();
+}, [openModal]);
+
+const handleConfirmDelete = useCallback(() => {
+  setEmployees(previous => 
+    previous.filter(
+      employee => employee.id !== employeeToDelete
+    )
   );
-}, []);
+  setEmployeeToDelete(null);
+  closeModal();
+}, [employeeToDelete, closeModal]);
+
+const handleCancelDelete = useCallback(() => {
+  setEmployeeToDelete(null);
+  closeModal();
+}, [closeModal])
 
 if(loading){
   return <Loader />
@@ -229,6 +247,8 @@ const paginatedEmployees = sortedEmployees
 
      
      <div style={pageStyle}>
+
+      
 
      <button onClick={toggleTheme}>
        Toggle Theme
@@ -316,6 +336,14 @@ const paginatedEmployees = sortedEmployees
         
       }
        
+
+       <ConfirmationModal 
+       isOpen={isOpen}
+       title="Delete Employee"
+       message="Are you sure you want to delete this employee?"
+       onConfirm={handleConfirmDelete}
+       onCancel={handleCancelDelete}
+       />
 
 
      </div>

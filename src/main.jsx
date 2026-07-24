@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import ThemeProvider from './context/ThemeContext'
 import AuthProvider from './context/AuthContext'
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 createRoot(document.getElementById('root')).render(
 
@@ -12,7 +13,9 @@ createRoot(document.getElementById('root')).render(
   <AuthProvider>
   <ThemeProvider>
   <BrowserRouter>
+  <ErrorBoundary>
     <App />
+    </ErrorBoundary>
     </BrowserRouter>
     </ThemeProvider>
     </AuthProvider>
